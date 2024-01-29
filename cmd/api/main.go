@@ -30,8 +30,11 @@ func main() {
 	}
 	log.Println(personServ.CreatePerson(dto))
 	dto2 := ports.PersonDTO{
-		ID:     2,
-		Gender: "F",
+		ID:        2,
+		FirstName: "Django Master",
+		LastName:  "Unchainer",
+		Gender:    "F",
 	}
-	personServ.UpdatePersonGender(dto2)
+	log.Println(personServ.UpdatePersonGender(dto2))
+	log.Println(personServ.DeletePerson(dto2))
 }

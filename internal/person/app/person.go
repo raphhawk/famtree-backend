@@ -12,7 +12,8 @@ import (
 )
 
 type Person struct {
-	DB ports.PersonDatabase
+	Server ports.PersonServer
+	DB     ports.PersonDatabase
 }
 
 func New() (*Person, error) {
@@ -99,9 +100,17 @@ func (p *Person) GetPersonById(id int) ports.PersonDTO {
 			&dao.Dob,
 			&dao.Email,
 		)
-	return handleResult(
-		nil, err, ae.InsertSuccess, "Rows Affected: %v\n",
-	)
+	if err != nil {
+		info := ae.InvalidDBId
+		info.Error = err
+		return ports.PersonDTO{
+			Info: info,
+		}
+	}
+	dto := daoTodto(dao)
+	info := ae.ReadSuccess
+	dto.Info = info
+	return dto
 }
 
 func (p *Person) GetPersonByEmail(email string) (ports.PersonDTO, error) {
@@ -147,12 +156,18 @@ func (p *Person) UpdatePersonDob(person ports.PersonDTO) ports.PersonDTO {
 	)
 }
 
+// UpdatePersonGender: FirstName and LastName required
 func (p *Person) UpdatePersonGender(person ports.PersonDTO) ports.PersonDTO {
-	dto := p.GetPersonById(person.ID)
-	person.FirstName, person.LastName = dto.FirstName, dto.LastName
-	log.Println(dto)
 	return p.UpdatePersonName(person)
 }
-func (p *Person) DeletePerson() error  { return nil }
-func (p *Person) SetAge() error        { return nil }
-func (p *Person) GetAge() (int, error) { return 0, nil }
+
+func (p *Person) DeletePerson(person ports.PersonDTO) ports.PersonDTO {
+	dao := dtoTodao(person)
+	result, err := p.DB.GetDB().Exec(
+		db.DeleteById,
+		dao.PersonId,
+	)
+	return handleResult(
+		result, err, ae.DeleteSuccess, "Rows Affected: %v\n",
+	)
+}

@@ -10,9 +10,7 @@ type PersonService interface {
 	UpdatePersonEmail(person PersonDTO) PersonDTO
 	UpdatePersonDob(person PersonDTO) PersonDTO
 	UpdatePersonGender(person PersonDTO) PersonDTO
-	DeletePerson() error
-	SetAge() error
-	GetAge() (int, error)
+	DeletePerson(person PersonDTO) PersonDTO
 }
 
 type PersonDatabase interface {
