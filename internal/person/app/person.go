@@ -1,8 +1,6 @@
 package app
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
 	"time"
 
@@ -51,25 +49,21 @@ func (p Person) String() string {
 }
 
 func handleResult(
-	result sql.Result,
+	result map[string]int64,
 	err error,
 	successInfo ae.ArtificialErrors,
-	optmessage string,
 ) ports.PersonDTO {
 	if err != nil {
 		info := ae.InvalidDBId
 		info.Error = err
+		log.Println("RH")
 		return ports.PersonDTO{
 			Info: info,
 		}
 	}
 
 	info := successInfo
-	var lastid int64
-	if result != nil {
-		lastid, _ = result.RowsAffected()
-	}
-	info.Others = fmt.Sprintf(optmessage, lastid)
+	info.Others = result
 	return ports.PersonDTO{
 		Info: info,
 	}
@@ -77,16 +71,18 @@ func handleResult(
 
 func (p *Person) CreatePerson(person ports.PersonDTO) ports.PersonDTO {
 	dao := dtoTodao(person)
-	res, err := p.DB.GetDB().Exec(
+	var lastid int64
+	err := p.DB.GetDB().QueryRow(
 		db.CreateQuery,
 		dao.Name,
 		dao.Dob,
 		dao.Email,
 		time.Now(),
 		time.Now(),
-	)
+	).Scan(&lastid)
+	log.Println("lastid", lastid)
 	return handleResult(
-		res, err, ae.InsertSuccess, "Rows Affected: %v\n",
+		map[string]int64{"lastid": lastid}, err, ae.InsertSuccess,
 	)
 }
 
@@ -119,40 +115,43 @@ func (p *Person) GetPersonByEmail(email string) (ports.PersonDTO, error) {
 
 func (p *Person) UpdatePersonName(person ports.PersonDTO) ports.PersonDTO {
 	dao := dtoTodao(person)
-	result, err := p.DB.GetDB().Exec(
+	var lastid int64
+	err := p.DB.GetDB().QueryRow(
 		db.UpdateName,
 		dao.Name,
 		time.Now(),
 		dao.PersonId,
-	)
+	).Scan(&lastid)
 	return handleResult(
-		result, err, ae.AlterSuccess, "Rows Affected: %v\n",
+		map[string]int64{"lastid": lastid}, err, ae.AlterSuccess,
 	)
 }
 
 func (p *Person) UpdatePersonEmail(person ports.PersonDTO) ports.PersonDTO {
 	dao := dtoTodao(person)
-	result, err := p.DB.GetDB().Exec(
+	var lastid int64
+	err := p.DB.GetDB().QueryRow(
 		db.UpdateEmail,
 		dao.Email,
 		time.Now(),
 		dao.PersonId,
-	)
+	).Scan(&lastid)
 	return handleResult(
-		result, err, ae.AlterSuccess, "Rows Affected: %v\n",
+		map[string]int64{"lastid": lastid}, err, ae.AlterSuccess,
 	)
 }
 
 func (p *Person) UpdatePersonDob(person ports.PersonDTO) ports.PersonDTO {
 	dao := dtoTodao(person)
-	result, err := p.DB.GetDB().Exec(
+	var lastid int64
+	err := p.DB.GetDB().QueryRow(
 		db.UpdateDob,
 		dao.Dob,
 		time.Now(),
 		dao.PersonId,
-	)
+	).Scan(&lastid)
 	return handleResult(
-		result, err, ae.AlterSuccess, "Rows Affected: %v\n",
+		map[string]int64{"lastid": lastid}, err, ae.AlterSuccess,
 	)
 }
 
@@ -167,7 +166,8 @@ func (p *Person) DeletePerson(person ports.PersonDTO) ports.PersonDTO {
 		db.DeleteById,
 		dao.PersonId,
 	)
+	rowsaffected, _ := result.RowsAffected()
 	return handleResult(
-		result, err, ae.DeleteSuccess, "Rows Affected: %v\n",
+		map[string]int64{"rowsaffected": rowsaffected}, err, ae.AlterSuccess,
 	)
 }

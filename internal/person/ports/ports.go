@@ -11,6 +11,7 @@ type PersonService interface {
 	UpdatePersonDob(person PersonDTO) PersonDTO
 	UpdatePersonGender(person PersonDTO) PersonDTO
 	DeletePerson(person PersonDTO) PersonDTO
+	SetFamily()
 }
 
 type PersonDatabase interface {
