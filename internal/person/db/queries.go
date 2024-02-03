@@ -7,6 +7,7 @@ var (
 	DROP TABLE person;
 	CREATE TABLE IF NOT EXISTS person (
 		p_id BIGSERIAL primary key,
+		f_id INT,
 		name TEXT,
 		dob DATE,
 		email TEXT,

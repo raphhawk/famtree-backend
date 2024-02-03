@@ -10,8 +10,7 @@ import (
 )
 
 type Person struct {
-	Server ports.PersonServer
-	DB     ports.PersonDatabase
+	DB ports.PersonDatabase
 }
 
 func New() (*Person, error) {
@@ -33,6 +32,7 @@ func New() (*Person, error) {
 	}
 	x, _ := res.LastInsertId()
 	log.Println(x)
+
 	return &Person{
 		DB: personDB,
 	}, nil

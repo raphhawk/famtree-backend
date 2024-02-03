@@ -8,6 +8,8 @@ import (
 
 // controller contracts
 var (
+	Port = ":8080"
+
 	//GET
 	GetPerson = "/api/person/:id"
 	GetPeople = "/api/people"

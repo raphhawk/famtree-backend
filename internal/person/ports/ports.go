@@ -1,6 +1,10 @@
 package ports
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/labstack/echo/v4"
+)
 
 type PersonService interface {
 	CreatePerson(person PersonDTO) PersonDTO
@@ -11,7 +15,6 @@ type PersonService interface {
 	UpdatePersonDob(person PersonDTO) PersonDTO
 	UpdatePersonGender(person PersonDTO) PersonDTO
 	DeletePerson(person PersonDTO) PersonDTO
-	SetFamily()
 }
 
 type PersonDatabase interface {
@@ -24,4 +27,11 @@ type PersonDatabase interface {
 type PersonServer interface {
 	MapUrls() error
 	ListenAndServe() error
+	Personel() PersonService
+	GetPerson(ctx echo.Context) error
+	GetPeople(ctx echo.Context) error
+	SendPeople(ctx echo.Context) error
+	AddPerson(ctx echo.Context) error
+	UpdatePerson(ctx echo.Context) error
+	RemovePerson(ctx echo.Context) error
 }
