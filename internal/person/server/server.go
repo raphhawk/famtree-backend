@@ -36,6 +36,10 @@ func (s *Server) Personel() ports.PersonService {
 
 func (s *Server) MapUrls() error {
 	s.Router.GET(ports.GetPerson, s.GetPerson)
+	s.Router.PUT(ports.AddPeople, s.SendPeople)
+	s.Router.PUT(ports.AddPerson, s.AddPerson)
+	s.Router.POST(ports.UpdatePerson, s.UpdatePerson)
+	s.Router.DELETE(ports.RemovePerson, s.RemovePerson)
 	return nil
 }
 

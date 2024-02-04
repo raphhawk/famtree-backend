@@ -114,6 +114,17 @@ func (p *Person) GetPersonByEmail(email string) (ports.PersonDTO, error) {
 }
 
 func (p *Person) UpdatePersonName(person ports.PersonDTO) ports.PersonDTO {
+	savedPerson := p.GetPersonById(person.ID)
+	if person.FirstName == "" {
+		person.FirstName = savedPerson.FirstName
+	}
+	if person.LastName == "" {
+		person.LastName = savedPerson.LastName
+	}
+	if person.Gender == "" {
+		person.Gender = savedPerson.Gender
+	}
+	//person.Gender = savedPerson.Gender
 	dao := dtoTodao(person)
 	var lastid int64
 	err := p.DB.GetDB().QueryRow(
@@ -157,14 +168,16 @@ func (p *Person) UpdatePersonDob(person ports.PersonDTO) ports.PersonDTO {
 
 // UpdatePersonGender: FirstName and LastName required
 func (p *Person) UpdatePersonGender(person ports.PersonDTO) ports.PersonDTO {
+	savedPerson := p.GetPersonById(person.ID)
+	person.FirstName = savedPerson.FirstName
+	person.LastName = savedPerson.LastName
 	return p.UpdatePersonName(person)
 }
 
-func (p *Person) DeletePerson(person ports.PersonDTO) ports.PersonDTO {
-	dao := dtoTodao(person)
+func (p *Person) DeletePerson(id int) ports.PersonDTO {
 	result, err := p.DB.GetDB().Exec(
 		db.DeleteById,
-		dao.PersonId,
+		id,
 	)
 	rowsaffected, _ := result.RowsAffected()
 	return handleResult(

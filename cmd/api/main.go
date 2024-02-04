@@ -38,7 +38,7 @@ func main() {
 		Gender:    "F",
 	}
 	log.Println(ps.Personel().UpdatePersonGender(dto2))
-	log.Println(ps.Personel().DeletePerson(dto2))
+	//log.Println(ps.Personel().DeletePerson(2))
 
 	ps.ListenAndServe()
 }

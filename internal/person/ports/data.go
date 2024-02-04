@@ -16,7 +16,8 @@ var (
 
 	//POST
 	AddPerson    = "/api/person"
-	UpdatePerson = "/api/person/:id"
+	AddPeople    = "/api/people"
+	UpdatePerson = "/api/person/update/:id"
 	RemovePerson = "/api/person/:id"
 )
 

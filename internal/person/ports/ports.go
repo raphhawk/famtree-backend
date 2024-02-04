@@ -14,7 +14,7 @@ type PersonService interface {
 	UpdatePersonEmail(person PersonDTO) PersonDTO
 	UpdatePersonDob(person PersonDTO) PersonDTO
 	UpdatePersonGender(person PersonDTO) PersonDTO
-	DeletePerson(person PersonDTO) PersonDTO
+	DeletePerson(id int) PersonDTO
 }
 
 type PersonDatabase interface {
