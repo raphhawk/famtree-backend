@@ -1,11 +1,14 @@
 package server
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/raphhawk/famtree/cmd/common/checkers"
 	ae "github.com/raphhawk/famtree/cmd/common/error"
 	"github.com/raphhawk/famtree/internal/person/ports"
 )
@@ -26,7 +29,8 @@ func (s *Server) GetPerson(ctx echo.Context) error {
 func (s *Server) GetPeople(ctx echo.Context) error { return nil }
 
 func (s *Server) SendPeople(ctx echo.Context) error {
-	var people, result []ports.PersonDTO
+	var people []ports.PersonDTO
+	var result []ae.ArtificialErrors
 	err := ctx.Bind(&people)
 	if err != nil {
 		log.Println(err)
@@ -34,9 +38,21 @@ func (s *Server) SendPeople(ctx echo.Context) error {
 		send.Error = err
 		return ctx.JSONPretty(send.StatusCode, send, "\t")
 	}
+
 	for _, person := range people {
+		validate := validator.New()
+		validate.RegisterValidation("dateonly", checkers.DobVal)
+		err = validate.Struct(person)
+		if err != nil {
+			log.Println(err.(validator.ValidationErrors))
+			send := ae.InvalidPayload
+			send.Error = errors.New("One or Mode input fields contain invalid data.")
+			//return ctx.JSONPretty(send.StatusCode, send, "\t")
+			result = append(result, send)
+			continue
+		}
 		res := s.Person.CreatePerson(person)
-		result = append(result, res)
+		result = append(result, res.Info)
 	}
 	return ctx.JSONPretty(http.StatusOK, result, "\t")
 }
@@ -50,6 +66,17 @@ func (s *Server) AddPerson(ctx echo.Context) error {
 		send.Error = err
 		return ctx.JSONPretty(send.StatusCode, send, "\t")
 	}
+
+	validate := validator.New()
+	validate.RegisterValidation("dateonly", checkers.DobVal)
+	err = validate.Struct(person)
+	if err != nil {
+		log.Println(err.(validator.ValidationErrors))
+		send := ae.InvalidPayload
+		send.Error = errors.New("One or Mode input fields contain invalid data.")
+		return ctx.JSONPretty(send.StatusCode, send, "\t")
+	}
+
 	res := s.Person.CreatePerson(person)
 	return ctx.JSONPretty(res.Info.StatusCode, res, "\t")
 }

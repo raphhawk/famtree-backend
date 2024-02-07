@@ -24,12 +24,12 @@ var (
 // PersonDTO acts as data transfer object for Person
 type PersonDTO struct {
 	ID        int                     `json:"id"`
-	FirstName string                  `json:"f_name"`
-	LastName  string                  `json:"l_name"`
-	Gender    string                  `json:"gender"`
+	FirstName string                  `json:"f_name," validate:"required,min=5,max=50,alpha"`
+	LastName  string                  `json:"l_name" validate:"required,min=5,max=50,alpha"`
+	Gender    string                  `json:"gender" validate:"required,alpha,uppercase,containsany=MFO,len=1"`
 	Age       int                     `json:"age"`
-	Dob       string                  `json:"dob"`
-	Email     string                  `json:"email"`
+	Dob       string                  `json:"dob" validate:"dateonly"`
+	Email     string                  `json:"email" validate:"email"`
 	Info      artErr.ArtificialErrors `json:"info"`
 }
 

@@ -19,4 +19,5 @@ var (
 	InvalidDBId     = ArtificialErrors{Type: "[ERROR]", Desc: "The requested data is invalid", StatusCode: http.StatusNotFound}
 	InvalidDate     = ArtificialErrors{Type: "[ERROR]", Desc: "The requested time is invalid", StatusCode: http.StatusInternalServerError}
 	InvalidPayload  = ArtificialErrors{Type: "[ERROR]", Desc: "Received invalid payload", StatusCode: http.StatusInternalServerError}
+	RetrivalError   = ArtificialErrors{Type: "[ERROR]", Desc: "Internal error", StatusCode: http.StatusInternalServerError}
 )
